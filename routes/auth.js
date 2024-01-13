@@ -29,7 +29,7 @@ router.post("/login", async (req, res) => {
 
     jwt.sign(
       payload,
-      process.env.SECRETJWT,
+      "SecretSecret",
       { expiresIn: 3600 * 24 * 60 }, //2 months
       (err, token) => {
         if (err) throw err;
@@ -88,7 +88,7 @@ router.post(
       // Sign the JWT
       jwt.sign(
         payload,
-        process.env.SECRETJWT,
+        "SecretSecret",
         { expiresIn: 3600 * 24 * 60 }, //2 months
         (err, token) => {
           if (err) throw err;
