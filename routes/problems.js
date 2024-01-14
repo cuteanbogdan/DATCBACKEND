@@ -63,6 +63,11 @@ router.post(
       }
 
       await problemToSave.save();
+
+      const user = req.user;
+      user.points = (user.points || 0) + 10;
+      await user.save();
+
       res.json(problemToSave);
     } catch (error) {
       console.error(error);
