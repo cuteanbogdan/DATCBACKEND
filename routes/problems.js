@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const passport = require("passport");
 const ReportedProblems = require("../schemas/ReportedProblems");
+const message = require("../servicebus");
 
 // GET /api/problems/retrieve - Retrieve all reported problems
 router.get(
@@ -49,10 +50,16 @@ router.post(
       });
 
       let problemToSave;
+      let problemToQueue;
 
       if (existingProblems && existingProblems.length > 0) {
         problemToSave = existingProblems[0];
         problemToSave.numarRaportari += 1;
+
+        problemToQueue = {
+          coord,
+          categorie,
+        };
       } else {
         // Create a new problem
         problemToSave = new ReportedProblems({
@@ -60,9 +67,15 @@ router.post(
           numarRaportari: 1,
           categorie,
         });
+
+        problemToQueue = {
+          coord,
+          categorie,
+        };
       }
 
       await problemToSave.save();
+      message(problemToQueue);
 
       const user = req.user;
       user.points = (user.points || 0) + 10;
